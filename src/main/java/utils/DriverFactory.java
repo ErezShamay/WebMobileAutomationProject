@@ -1,62 +1,71 @@
 package utils;
 
-import com.microsoft.playwright.*;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Playwright;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
-import org.openqa.selenium.MutableCapabilities;
-
+import org.openqa.selenium.remote.DesiredCapabilities;
 import java.net.URL;
-import java.util.List;
+import java.util.Arrays;
 
 public class DriverFactory {
 
-    private static Browser browser;
-    private static BrowserContext context;
+    private static final boolean DEFAULT_HEADLESS = true;
     private static AndroidDriver<MobileElement> androidDriver;
     private static IOSDriver<MobileElement> iosDriver;
 
-    public static Browser getBrowser() {
-        if (browser == null) {
-            Playwright playwright = Playwright.create();
-            BrowserType browserType = playwright.chromium();
-            BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
-                    .setArgs(List.of("--no-sandbox"))
-                    .setHeadless(true); // Set to false if you want to see the browser UI
-            browser = browserType.launch(options);
+    public static Browser getBrowser(String browserName) {
+        return getBrowser(browserName, DEFAULT_HEADLESS);
+    }
+
+    public static Browser getBrowser(String browserName, boolean headless) {
+        Playwright playwright = Playwright.create();
+        Browser browser;
+
+        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions();
+        options.setHeadless(headless);
+
+        options.setArgs(Arrays.asList(
+                "--disable-gpu",
+                "--disable-software-rasterizer",
+                "--no-sandbox"
+        ));
+
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                browser = playwright.chromium().launch(options);
+                break;
+            case "firefox":
+                browser = playwright.firefox().launch(options);
+                break;
+            case "webkit":
+                browser = playwright.webkit().launch(options);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported browser: " + browserName);
         }
+
         return browser;
-    }
-
-    public static BrowserContext getContext() {
-        if (context == null) {
-            context = getBrowser().newContext();
-        }
-        return context;
-    }
-
-    // Get page for Web Automation
-    public static Page getPage() {
-        return getContext().newPage();
     }
 
     public static AndroidDriver<MobileElement> getAndroidDriver() {
         if (androidDriver == null) {
             try {
-                MutableCapabilities capabilities = new MutableCapabilities();
+                DesiredCapabilities capabilities = new DesiredCapabilities();
                 capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-                capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "11.0"); // Set correct version
-                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Perfecto Android Device ID"); // Use the correct device ID
-                capabilities.setCapability(MobileCapabilityType.APP, "cloud:your-app.apk"); // Path to the app in Perfecto Cloud
-                capabilities.setCapability("perfecto:securityToken", "YOUR_PERFECTO_API_KEY"); // Replace with your API key
-                capabilities.setCapability("appiumVersion", "1.22.0"); // Set Appium version if needed
-                capabilities.setCapability("deviceOrientation", "PORTRAIT"); // Optional, set orientation as needed
-                capabilities.setCapability("perfecto:deviceGroup", "YOUR_DEVICE_GROUP"); // Optional, set device group if needed
+                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "RealDeviceName"); // Replace with your device name
+                capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "yourAndroidVersion"); // Replace with Android version
+                capabilities.setCapability(MobileCapabilityType.APP, "yourAppPathOrPerfectoURL"); // Replace with app path or Perfecto URL
 
-                androidDriver = new AndroidDriver<MobileElement>(new URL("https://YOUR_PERFECTO_CLOUD_URL"), capabilities);
+                capabilities.setCapability("securityToken", "yourSecurityToken");
+                capabilities.setCapability("cloudName", "yourPerfectoCloudName");
+
+                androidDriver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
             } catch (Exception e) {
-                System.err.println("Error initializing Android driver: " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return androidDriver;
@@ -65,37 +74,29 @@ public class DriverFactory {
     public static IOSDriver<MobileElement> getIOSDriver() {
         if (iosDriver == null) {
             try {
-                MutableCapabilities capabilities = new MutableCapabilities();
+                DesiredCapabilities capabilities = new DesiredCapabilities();
                 capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
-                capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15.0"); // Set correct version
-                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Perfecto iOS Device ID"); // Use the correct device ID
-                capabilities.setCapability(MobileCapabilityType.APP, "cloud:your-ios-app.ipa"); // Path to the app in Perfecto Cloud
-                capabilities.setCapability("perfecto:securityToken", "YOUR_PERFECTO_API_KEY"); // Replace with your API key
-                capabilities.setCapability("appiumVersion", "1.22.0"); // Set Appium version if needed
-                capabilities.setCapability("deviceOrientation", "PORTRAIT"); // Optional, set orientation as needed
-                capabilities.setCapability("perfecto:deviceGroup", "YOUR_DEVICE_GROUP"); // Optional, set device group if needed
+                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "RealDeviceName"); // Replace with your device name
+                capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "yourIOSVersion"); // Replace with iOS version
+                capabilities.setCapability(MobileCapabilityType.APP, "yourAppPathOrPerfectoURL"); // Replace with app path or Perfecto URL
 
-                iosDriver = new IOSDriver<MobileElement>(new URL("https://YOUR_PERFECTO_CLOUD_URL"), capabilities);
+                capabilities.setCapability("securityToken", "yourSecurityToken");
+                capabilities.setCapability("cloudName", "yourPerfectoCloudName");
+
+                iosDriver = new IOSDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
             } catch (Exception e) {
-                System.err.println("Error initializing iOS driver: " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return iosDriver;
     }
 
     public static void close() {
-        if (browser != null) {
-            browser.close();
-            browser = null;
-            context = null;
-        }
         if (androidDriver != null) {
             androidDriver.quit();
-            androidDriver = null;
         }
         if (iosDriver != null) {
             iosDriver.quit();
-            iosDriver = null;
         }
     }
 }
