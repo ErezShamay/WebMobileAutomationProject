@@ -7,6 +7,8 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
@@ -21,6 +23,8 @@ public class DriverFactory {
     private static final ThreadLocal<Browser> threadLocalBrowser = new ThreadLocal<>();
     private static final ThreadLocal<AndroidDriver<MobileElement>> threadLocalAndroidDriver = new ThreadLocal<>();
     private static final ThreadLocal<IOSDriver<MobileElement>> threadLocalIOSDriver = new ThreadLocal<>();
+
+    private static final Logger logger = LogManager.getLogger(DriverFactory.class);
 
     public static Browser getBrowser() {
         return getBrowser(DEFAULT_BROWSER, DEFAULT_HEADLESS);
@@ -54,6 +58,7 @@ public class DriverFactory {
             }
 
             threadLocalBrowser.set(browser);
+            logger.info("Launched browser: " + browserName);
         }
         return threadLocalBrowser.get();
     }
@@ -71,14 +76,14 @@ public class DriverFactory {
 
                 AndroidDriver<MobileElement> driver = new AndroidDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
                 threadLocalAndroidDriver.set(driver);
+                logger.info("Android driver initialized.");
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error initializing Android driver: " + e.getMessage(), e);
             }
         }
         return threadLocalAndroidDriver.get();
     }
 
-    // Get an IOSDriver instance
     public static IOSDriver<MobileElement> getIOSDriver() {
         if (threadLocalIOSDriver.get() == null) {
             try {
@@ -92,8 +97,9 @@ public class DriverFactory {
 
                 IOSDriver<MobileElement> driver = new IOSDriver<>(new URL("http://localhost:4723/wd/hub"), capabilities);
                 threadLocalIOSDriver.set(driver);
+                logger.info("iOS driver initialized.");
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error initializing iOS driver: " + e.getMessage(), e);
             }
         }
         return threadLocalIOSDriver.get();
@@ -105,9 +111,10 @@ public class DriverFactory {
             try {
                 if (browser.isConnected()) {
                     browser.close();
+                    logger.info("Browser closed.");
                 }
             } catch (Exception e) {
-                System.err.println("Error closing browser: " + e.getMessage());
+                logger.error("Error closing browser: " + e.getMessage(), e);
             } finally {
                 threadLocalBrowser.remove();
             }
@@ -116,8 +123,9 @@ public class DriverFactory {
             if (playwright != null) {
                 try {
                     playwright.close();
+                    logger.info("Playwright closed.");
                 } catch (Exception e) {
-                    System.err.println("Error closing Playwright: " + e.getMessage());
+                    logger.error("Error closing Playwright: " + e.getMessage(), e);
                 } finally {
                     threadLocalPlaywright.remove();
                 }
@@ -127,8 +135,9 @@ public class DriverFactory {
             if (androidDriver != null) {
                 try {
                     androidDriver.quit();
+                    logger.info("AndroidDriver quit.");
                 } catch (Exception e) {
-                    System.err.println("Error quitting AndroidDriver: " + e.getMessage());
+                    logger.error("Error quitting AndroidDriver: " + e.getMessage(), e);
                 } finally {
                     threadLocalAndroidDriver.remove();
                 }
@@ -138,8 +147,9 @@ public class DriverFactory {
             if (iosDriver != null) {
                 try {
                     iosDriver.quit();
+                    logger.info("IOSDriver quit.");
                 } catch (Exception e) {
-                    System.err.println("Error quitting IOSDriver: " + e.getMessage());
+                    logger.error("Error quitting IOSDriver: " + e.getMessage(), e);
                 } finally {
                     threadLocalIOSDriver.remove();
                 }
