@@ -29,7 +29,7 @@ public class ExampleWebTest {
     }
 
     @Test
-    public void testWithSpecificBrowser() {
+    public void testWebPageTitleWithSpecificBrowser() {
         Browser firefoxBrowser = DriverFactory.getBrowser("firefox");
         Page page = firefoxBrowser.newPage();
         page.navigate(loginPageObject.loginUrl);
@@ -37,7 +37,7 @@ public class ExampleWebTest {
     }
 
     @Test
-    public void testWithSpecificBrowserNoHeadLess() {
+    public void testWebPageTitleWithSpecificBrowserNoHeadLess() {
         Browser firefoxBrowser = DriverFactory.getBrowser("firefox", false);
         Page page = firefoxBrowser.newPage();
         page.navigate(loginPageObject.loginUrl);
