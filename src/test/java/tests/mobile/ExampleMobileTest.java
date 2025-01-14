@@ -1,27 +1,50 @@
 package tests.mobile;
 
+import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
-import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import utils.DriverFactory;
+import utils.MobileDriverFactory;
 
 public class ExampleMobileTest {
 
-    @Test
-    public void testAndroidRealDevice() {
-        AndroidDriver<MobileElement> driver = DriverFactory.getAndroidDriver();
-        driver.launchApp();
-        Assert.assertEquals(driver.findElementById("com.example.yourapp:id/textView").getText(), "Expected Text");
-        DriverFactory.close();
+    @BeforeMethod
+    public void setUp() {
+        // Default: Initialize the Appium driver for Android on Perfecto cloud
+        MobileDriverFactory.initialize(MobileDriverFactory.PlatformType.ANDROID, MobileDriverFactory.DeviceType.PERFECTO);
     }
 
     @Test
-    public void testIOSRealDevice() {
-        IOSDriver<MobileElement> driver = DriverFactory.getIOSDriver();
-        driver.launchApp();
-        Assert.assertEquals(driver.findElementById("com.example.yourapp:id/textView").getText(), "Expected Text");
-        DriverFactory.close();
+    public void runTestOnPerfecto() {
+        // Get the Appium driver instance for Perfecto
+        AppiumDriver<MobileElement> driver = MobileDriverFactory.getDriver();
+
+        // Perform actions on the mobile app using the driver
+        MobileElement element = driver.findElementById("com.example:id/button");
+        element.click();
+
+        // Add your test steps here
+    }
+
+    @Test
+    public void runTestOnRealDevice() {
+        // Switch to a real device (local) for testing
+        MobileDriverFactory.initialize(MobileDriverFactory.PlatformType.ANDROID, MobileDriverFactory.DeviceType.LOCAL);
+
+        // Get the Appium driver instance for the real device
+        AppiumDriver<MobileElement> driver = MobileDriverFactory.getDriver();
+
+        // Perform actions on the mobile app using the driver
+        MobileElement element = driver.findElementById("com.example:id/button");
+        element.click();
+
+        // Add your test steps here
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        // Close the Appium driver after the test
+        MobileDriverFactory.close();
     }
 }
