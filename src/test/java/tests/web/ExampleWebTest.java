@@ -9,15 +9,15 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.DriverFactory;
-import webPageObjects.Login;
+import webPageObjects.LoginPage;
 
 public class ExampleWebTest {
     private Browser browser;
-    private final Login loginPageObject;
+    private final LoginPage loginPageObject;
     private static final Logger logger = LogManager.getLogger(ExampleWebTest.class);
 
     public ExampleWebTest() {
-        this.loginPageObject = new Login();
+        this.loginPageObject = new LoginPage();
     }
 
     @BeforeClass

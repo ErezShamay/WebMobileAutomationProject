@@ -1,5 +1,5 @@
 package webPageObjects;
 
-public class Login {
+public class LoginPage {
     public String loginUrl = "https://www.example.com";
 }
