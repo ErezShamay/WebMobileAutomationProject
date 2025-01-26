@@ -1,6 +1,9 @@
 package utils;
 
-import com.microsoft.playwright.*;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 
 public class WebDriverFactory {
     private static ThreadLocal<Browser> browserThreadLocal = new ThreadLocal<>();
@@ -15,10 +18,11 @@ public class WebDriverFactory {
     private static final String DEFAULT_BROWSER = ConfigLoader.getProperty("browser", "CHROMIUM");
     private static final boolean IS_HEADLESS = Boolean.parseBoolean(ConfigLoader.getProperty("headless", "true"));
 
-    public static void initialize(BrowserTypeOption browserOption) {
+    public static void initialize(BrowserTypeOption browserOption, boolean headless) {
+        System.out.println("Initializing browser: " + browserOption + " with headless: " + headless);  // Debugging line
         if (browserThreadLocal.get() == null) {
             Playwright playwright = Playwright.create();
-            BrowserType.LaunchOptions options = new BrowserType.LaunchOptions().setHeadless(IS_HEADLESS);
+            BrowserType.LaunchOptions options = new BrowserType.LaunchOptions().setHeadless(headless);
 
             switch (browserOption) {
                 case FIREFOX:
@@ -37,8 +41,16 @@ public class WebDriverFactory {
         }
     }
 
+    public static void initialize(BrowserTypeOption browserOption) {
+        initialize(browserOption, IS_HEADLESS);
+    }
+
     public static void initialize() {
-        initialize(BrowserTypeOption.valueOf(DEFAULT_BROWSER.toUpperCase()));
+        initialize(BrowserTypeOption.valueOf(DEFAULT_BROWSER.toUpperCase()), IS_HEADLESS);
+    }
+
+    public static void initialize(boolean headless) {
+        initialize(BrowserTypeOption.valueOf(DEFAULT_BROWSER.toUpperCase()), headless);
     }
 
     public static Page getPage() {
