@@ -22,7 +22,7 @@ public class ExampleWebTest {
 
     @Test
     public void runTestWithFirefox() {
-        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX, false);
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX);
         page = WebDriverFactory.getPage();
         waits = new Waits(page);
         page.navigate(HomePage.url);
@@ -31,7 +31,7 @@ public class ExampleWebTest {
 
     @Test
     public void runTestWithFirefoxNoHeadless() {
-        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX);
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX, false);
         page = WebDriverFactory.getPage();
         waits = new Waits(page);
         page.navigate(HomePage.url);
