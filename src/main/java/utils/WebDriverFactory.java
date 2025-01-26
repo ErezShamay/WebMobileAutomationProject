@@ -12,13 +12,12 @@ public class WebDriverFactory {
         WEBKIT
     }
 
-    private static final String DEFAULT_BROWSER = ConfigLoader.getProperty("browser");
-    private static final boolean IS_HEADLESS = Boolean.parseBoolean(ConfigLoader.getProperty("headless"));
+    private static final String DEFAULT_BROWSER = ConfigLoader.getProperty("browser", "CHROMIUM");
+    private static final boolean IS_HEADLESS = Boolean.parseBoolean(ConfigLoader.getProperty("headless", "true"));
 
-    public static void initialize() {
+    public static void initialize(BrowserTypeOption browserOption) {
         if (browserThreadLocal.get() == null) {
             Playwright playwright = Playwright.create();
-            BrowserTypeOption browserOption = BrowserTypeOption.valueOf(DEFAULT_BROWSER);
             BrowserType.LaunchOptions options = new BrowserType.LaunchOptions().setHeadless(IS_HEADLESS);
 
             switch (browserOption) {
@@ -33,8 +32,13 @@ public class WebDriverFactory {
                     browserThreadLocal.set(playwright.chromium().launch(options));
                     break;
             }
+
             pageThreadLocal.set(browserThreadLocal.get().newPage());
         }
+    }
+
+    public static void initialize() {
+        initialize(BrowserTypeOption.valueOf(DEFAULT_BROWSER.toUpperCase()));
     }
 
     public static Page getPage() {
@@ -44,6 +48,8 @@ public class WebDriverFactory {
     public static void close() {
         if (browserThreadLocal.get() != null) {
             browserThreadLocal.get().close();
+            browserThreadLocal.remove();
+            pageThreadLocal.remove();
         }
     }
 }

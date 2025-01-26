@@ -19,7 +19,7 @@ public class ExampleWebTest {
 
     @Test
     public void runTestWithFirefox() {
-        WebDriverFactory.initialize();
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX);
         page = WebDriverFactory.getPage();
         page.navigate("https://example.com");
 
@@ -27,7 +27,7 @@ public class ExampleWebTest {
 
     @Test
     public void runTestWithWebKit() {
-        WebDriverFactory.initialize();
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.WEBKIT);
         page = WebDriverFactory.getPage();
         page.navigate("https://example.com");
     }
