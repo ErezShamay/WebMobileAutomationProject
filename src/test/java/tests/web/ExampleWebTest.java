@@ -31,7 +31,7 @@ public class ExampleWebTest {
 
     @Test
     public void runTestWithFirefoxNoHeadless() {
-        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX, false);
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX);
         page = WebDriverFactory.getPage();
         waits = new Waits(page);
         page.navigate(HomePage.url);

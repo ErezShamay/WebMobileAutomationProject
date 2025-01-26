@@ -4,8 +4,11 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebDriverFactory {
+    private static final Logger logger = LoggerFactory.getLogger(WebDriverFactory.class);
     private static ThreadLocal<Browser> browserThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<Page> pageThreadLocal = new ThreadLocal<>();
 
@@ -19,7 +22,7 @@ public class WebDriverFactory {
     private static final boolean IS_HEADLESS = Boolean.parseBoolean(ConfigLoader.getProperty("headless", "true"));
 
     public static void initialize(BrowserTypeOption browserOption, boolean headless) {
-        System.out.println("Initializing browser: " + browserOption + " with headless: " + headless);  // Debugging line
+        logger.info("Initializing browser: {} with headless: {}", browserOption, headless);
         if (browserThreadLocal.get() == null) {
             Playwright playwright = Playwright.create();
             BrowserType.LaunchOptions options = new BrowserType.LaunchOptions().setHeadless(headless);
