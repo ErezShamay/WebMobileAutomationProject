@@ -23,7 +23,7 @@ public class ExampleWebTest {
 
     @Test
     public void runTestWithFirefox() {
-        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX);
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX, false);
         page = WebDriverFactory.getPage();
         waits = new Waits(page);
         page.navigate(HomePage.url);
@@ -41,7 +41,7 @@ public class ExampleWebTest {
 
     @Test
     public void runTestWithWebKit() {
-        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.WEBKIT);
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.WEBKIT, false);
         page = WebDriverFactory.getPage();
         waits = new Waits(page);
         page.navigate(HomePage.url);
@@ -59,7 +59,7 @@ public class ExampleWebTest {
 
     @Test
     public void testValidateTabName() {
-        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX);
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX, false);
         page = WebDriverFactory.getPage();
         waits = new Waits(page);
         page.navigate(HomePage.url);
@@ -70,7 +70,7 @@ public class ExampleWebTest {
 
     @Test
     public void testValidateNavigation() {
-        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX);
+        WebDriverFactory.initialize(WebDriverFactory.BrowserTypeOption.FIREFOX, false);
         page = WebDriverFactory.getPage();
         waits = new Waits(page);
         page.navigate(HomePage.url);
